@@ -1,0 +1,73 @@
+services:
+  factorial_hr_local:
+    container_name: factorial_hr_local
+    build:
+      context: ..
+      dockerfile: .docker/Dockerfile
+    env_file:
+      - ../env/local.env
+    environment:
+      - ENVIRONMENT=local
+      - DJANGO_SETTINGS_MODULE=factorial_hr.settings.local
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../:/app
+    depends_on:
+      - factorial_hr_postgres
+
+  factorial_hr_postgres:
+    container_name: factorial_hr_postgres
+    image: postgres:15
+    env_file:
+      - ../env/local.env
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOSTNAME=factorial_hr_postgres
+      - POSTGRES_PORT=5432
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  pgadmin_local:
+    restart: always
+    container_name: pgadmin_local
+    env_file:
+      - ../env/local.env
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: servidor@colegiomigueldecervantes.cl
+      PGADMIN_DEFAULT_PASSWORD: 1234
+    ports:
+      - 5050:80
+    depends_on:
+      - factorial_hr_postgres
+
+  redis:
+    image: redis
+    expose:
+      - 6380
+    ports:
+      - "6380:6380"
+    volumes:
+      - redis_data:/data
+    entrypoint: redis-server --appendonly yes --port 6380
+
+  celery:
+    build:
+      context: ..
+      dockerfile: .docker/Dockerfile
+    command: celery -A factorial_hr worker -l INFO
+    volumes:
+      - ../:/app
+    env_file:
+      - ../env/local.env
+    depends_on:
+      - redis
+
+volumes:
+  postgres_data: {}
+  redis_data: {}
