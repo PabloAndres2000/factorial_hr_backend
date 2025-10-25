@@ -22,7 +22,10 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-
+    'rest_framework',
+    'rest_framework.authtoken',
+    'admin_interface',
+    'colorfield',
 ]
 
 APPLICATION_APPS = [

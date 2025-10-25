@@ -46,7 +46,7 @@ down:
 	$(DOCKER_COMPOSE) -f compose/$(ENV).yml down --remove-orphans
 
 bash:
-	$(DOCKER_COMPOSE) -f compose/$(ENV).yml exec -it electronic_book_$(ENV) /bin/bash
+	$(DOCKER_COMPOSE) -f compose/$(ENV).yml exec -it factorial_hr_$(ENV) /bin/bash
 
 .PHONY: k8s-verify
 k8s-verify:

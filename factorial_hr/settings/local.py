@@ -34,7 +34,7 @@ DATABASES = {
         "NAME": os.environ.get("POSTGRES_NAME", "postgres"),
         "USER": os.environ.get("POSTGRES_USER", "postgres"),
         "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "postgres"),
-        "HOST": os.environ.get("POSTGRES_HOST", 'electronic_book_postgres'),
+        "HOST": os.environ.get("POSTGRES_HOST", 'factorial_hr_postgres'),
         "PORT": os.environ.get("POSTGRES_PORT", "5432"),
         "DISABLE_SERVER_SIDE_CURSORS": True,
     }
