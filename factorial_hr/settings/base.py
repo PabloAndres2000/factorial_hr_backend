@@ -2,6 +2,8 @@
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+from datetime import timedelta
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,13 +24,16 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-    'rest_framework',
-    'rest_framework.authtoken',
-    'admin_interface',
-    'colorfield',
+    'rest_framework',                     # Django REST Framework
+    'rest_framework.authtoken',           # Token auth (si lo usas)
+    'admin_interface',                    # Admin interface moderna
+    'colorfield',                         # Soporte para colorfield en admin
+    'simple_history',
 ]
 
 APPLICATION_APPS = [
+    "factorial_hr.apps.users",
+    "factorial_hr.apps.auth",
 
 ]
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + APPLICATION_APPS 
@@ -60,6 +65,15 @@ TEMPLATES = [
         },
     },
 ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.TokenAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 100
+}
 
 WSGI_APPLICATION = 'factorial_hr.wsgi.application'
 
@@ -102,5 +116,34 @@ STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
+AUTH_USER_MODEL = "users.User"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Configuración de proveedores OAuth
+OAUTH_PROVIDERS = {
+    'google': {
+        'well_known_url': 'https://accounts.google.com/.well-known/openid-configuration',
+        'audience': '407408718192.apps.googleusercontent.com',
+        'display_name': 'Google',
+        'enabled': True,
+    },
+    'microsoft': {
+        'well_known_url': 'https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration',
+        'audience': 'your-microsoft-client-id',  # Reemplaza con tu Client ID de Microsoft
+        'display_name': 'Microsoft Outlook',
+        'enabled': True,
+    },
+    'github': {
+        'well_known_url': 'https://token.actions.githubusercontent.com/.well-known/openid-configuration',
+        'audience': 'your-github-client-id',  # Reemplaza con tu Client ID de GitHub
+        'display_name': 'GitHub',
+        'enabled': False,  # Deshabilitado por defecto
+    }
+}
+
+# Configuración de autenticación
+AUTH_REFRESH_TTL_DAYS = 7
+
+# Configuración por defecto (para compatibilidad hacia atrás)
+DEFAULT_OAUTH_PROVIDER = 'google'

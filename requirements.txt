@@ -1,8 +1,12 @@
 Django>=4.2
 djangorestframework
+django-admin-interface
+django-colorfield
+django-simple-history
 psycopg2-binary
 pandas
 python-dotenv
 celery
-django-admin-interface
-django-colorfield
+requests
+python-jose
+pyjwt[crypto]
