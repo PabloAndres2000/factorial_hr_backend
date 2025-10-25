@@ -35,7 +35,7 @@ test)
   pytest "$@" --isort --black
 ;;
 cov)
-  pytest "$@" --isort --black --cov=factorial_hr_v3
+  pytest "$@" --isort --black --cov=factorial_hr
 ;;
 black)
   black .
@@ -47,8 +47,8 @@ csuser)
   python manage.py createsuperuser
 ;;
 createapp)
-  mkdir ./factorial_hr_v3/apps/"$@" &&
-  python manage.py startapp "$@" ./factorial_hr_v3/apps/"$@"
+  mkdir ./factorial_hr/apps/"$@" &&
+  python manage.py startapp "$@" ./factorial_hr/apps/"$@"
 ;;
 pipi)
   pip install -r requirements.txt
