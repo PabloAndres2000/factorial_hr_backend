@@ -16,6 +16,7 @@ class User(AbstractBaseUser, PermissionsMixin, UUIDBasedModel, HistoricalModel):
         max_length=12, unique=True, blank=True, null=True)
     birthdate = models.DateField(blank=True, null=True)
     photo = models.ImageField(upload_to='user_photos/', blank=True, null=True)
+    ip_addresses = models.JSONField(default=dict, null=True, blank=True)
 
     # Explicit fields needed for Django admin and user checks
     is_staff = models.BooleanField(default=False)

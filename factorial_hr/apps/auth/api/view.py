@@ -18,6 +18,13 @@ from factorial_hr.apps.auth.api.serializers import (
     ProviderListSerializer
 )
 
+from factorial_hr.utils.ip import get_client_ip
+from factorial_hr.apps.auth.services.auth_service import AuthService
+from factorial_hr.constants.api import (
+    DATA_NOT_FOUND,
+    NOT_FILLED_FIELDS,
+    WRONG_CREDENTIALS,
+)
 # Configuración de autenticación
 REFRESH_TTL_DAYS = getattr(settings, "AUTH_REFRESH_TTL_DAYS", 7)
 DEFAULT_PROVIDER = getattr(settings, "DEFAULT_OAUTH_PROVIDER", "google")
@@ -208,3 +215,30 @@ class AuthViewSet(viewsets.ViewSet):
             "provider": provider.get_provider_name(),
             "external_claims": payload
         }, status=status.HTTP_200_OK)
+
+    @action(
+        detail=False,
+        methods=["POST"],
+        url_name="login_with_email_password",
+        url_path="login",
+    )
+    def login_with_email_password(self, request):
+        """
+        Autenticación de usuario local con email y password.
+        """
+        email = request.data.get("email")
+        password = request.data.get("password")
+        ip_address = get_client_ip(request=request)
+
+        if not email or not password:
+            return Response(data=NOT_FILLED_FIELDS, status=status.HTTP_400_BAD_REQUEST)
+        user, token = AuthService.login(
+            email=email, password=password, ip_address=ip_address
+        )
+        if not user or not token:
+            return Response(data=WRONG_CREDENTIALS, status=status.HTTP_400_BAD_REQUEST)
+       
+        return Response({
+            "user": user.email,
+            "token": token
+        })
