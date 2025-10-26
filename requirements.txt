@@ -10,3 +10,4 @@ celery
 requests
 python-jose
 pyjwt[crypto]
+django-cors-headers

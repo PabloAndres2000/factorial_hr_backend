@@ -29,6 +29,7 @@ THIRD_PARTY_APPS = [
     'admin_interface',                    # Admin interface moderna
     'colorfield',                         # Soporte para colorfield en admin
     'simple_history',
+    'corsheaders'
 ]
 
 APPLICATION_APPS = [
@@ -41,6 +42,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + APPLICATION_APPS
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -124,7 +126,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 OAUTH_PROVIDERS = {
     'google': {
         'well_known_url': 'https://accounts.google.com/.well-known/openid-configuration',
-        'audience': '407408718192.apps.googleusercontent.com',
+        'audience': '246849265305-l1fqk4ejhnhldup6ibc8pulqsokfsnq9.apps.googleusercontent.com',
         'display_name': 'Google',
         'enabled': True,
     },

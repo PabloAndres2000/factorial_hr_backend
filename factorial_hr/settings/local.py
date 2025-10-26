@@ -3,7 +3,7 @@ from .base import *
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:4200',
-
+    "http://127.0.0.1:4200",
 ]
 
 CORS_ALLOW_METHODS = [
@@ -42,5 +42,6 @@ DATABASES = {
 
 DEBUG = os.getenv("DEBUG", "True").lower() in ("true", "1", "yes")
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "localhost").split(",")
+CORS_ALLOW_ALL_ORIGINS = True
 
 
