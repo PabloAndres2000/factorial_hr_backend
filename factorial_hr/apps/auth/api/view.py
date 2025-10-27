@@ -3,11 +3,11 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
+from rest_framework.permissions import AllowAny
 from django.utils import timezone
 from django.conf import settings
 from datetime import timedelta
 import uuid
-
 from factorial_hr.apps.auth.services.oauth_provider_client import OAuthProviderFactory, OAuthProviderClient
 from factorial_hr.apps.auth.services.token_verifier import TokenVerifier
 from factorial_hr.apps.users.repositories.user_repository import UserRepository
@@ -25,12 +25,14 @@ from factorial_hr.constants.api import (
     NOT_FILLED_FIELDS,
     WRONG_CREDENTIALS,
 )
+
+from factorial_hr.apps.auth.repositories import token_repositories as token_providers
 # Configuración de autenticación
 REFRESH_TTL_DAYS = getattr(settings, "AUTH_REFRESH_TTL_DAYS", 7)
 DEFAULT_PROVIDER = getattr(settings, "DEFAULT_OAUTH_PROVIDER", "google")
 
 class AuthViewSet(viewsets.ViewSet):
-    @action(detail=False, methods=['post'], url_path='external-login')
+    @action(detail=False, methods=['post'], url_path='external-login',  permission_classes=[AllowAny] )
     def external_login(self, request):
         serializer = ExternalLoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -221,6 +223,7 @@ class AuthViewSet(viewsets.ViewSet):
         methods=["POST"],
         url_name="login_with_email_password",
         url_path="login",
+        permission_classes=[AllowAny],
     )
     def login_with_email_password(self, request):
         """
@@ -242,3 +245,22 @@ class AuthViewSet(viewsets.ViewSet):
             "user": user.email,
             "token": token
         })
+    
+    @action(
+        detail=False,
+        methods=["POST"],
+        url_name="logout",
+        url_path="logout",
+    )
+    def logout(self, request):
+        user = request.user
+        if not user:
+            return Response(DATA_NOT_FOUND, status=status.HTTP_404_NOT_FOUND)
+
+        user.ip_addresses.pop(get_client_ip(request), None)
+        user.save(update_fields=["ip_addresses"])
+        if token_providers.remove_token_on_logout(user.uuid):
+            return Response(
+                {"detail": "Logout exitoso. Token invalidado."},
+                status=status.HTTP_200_OK,
+            )
