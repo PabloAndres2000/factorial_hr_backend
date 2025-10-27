@@ -149,3 +149,13 @@ AUTH_REFRESH_TTL_DAYS = 7
 
 # Configuración por defecto (para compatibilidad hacia atrás)
 DEFAULT_OAUTH_PROVIDER = 'google'
+
+# Configuración de Email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('SENDER_APPLICATION_PASSWORD')
+DEFAULT_FROM_EMAIL = os.getenv('EMAIL_HOST_USER')
+FRONT_URL = os.getenv('FRONT_URL', 'http://localhost:3000')
